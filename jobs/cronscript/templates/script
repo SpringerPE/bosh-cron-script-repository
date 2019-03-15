@@ -1,0 +1,56 @@
+#!/bin/bash
+LOG_DIR=/var/vcap/sys/log/cron/recover_from_readonly.log
+
+# regex to check if a variable has a number on it
+re='^.*[0-9]+([.][0-9]+)?$'
+
+es_aliases=("logs-error" "logs-warn" "logs-info" "logs-debug" "logs-unknown")
+
+# with this loop we make sure that we perform the logic to all the aliases,
+# not just to one
+for alias in "${es_aliases[@]}"
+do
+  body=$(curl -s -X GET http://((elasticsearch_host)):9200/$alias/_settings/index.blocks.read_only_allow_delete | grep '"read_only_allow_delete":"true"')
+
+  # if the response body has more than 1 char, this means that the setting 'read_only_allow_delete' is true,
+  # so the index is in read-only mode
+  if [ ${#body} -ge 1 ]; then
+      # now we need to check if ALL the nodes are <85% disk usage
+      allNodesBelow85=true
+
+      # this api call will return the disk usage of each node
+      nodeDiskUsage=$(curl -X GET 'http://((elasticsearch_host)):9200/_cat/nodes?v&h=diskUsedPercent')
+
+      # the output from the previous call will contain the data per line
+      # we need to iterate through each line to have the disk usage of each node
+      while IFS= read -r line
+      do
+         # this will trim the white spaces at the beginning of the line
+         # 'n' will be the same as 'line', but without white spaces in the beginning
+         n=$(echo "${line}" | awk '{gsub(/^ +| +$/,"")} { print $0}')
+
+         # we check if 'n' is a number
+         if [[ $n =~ $re ]] ; then
+            # we remove the decimal part of the number
+            # eg. 80.88 will become 80
+            int=${n%.*}
+
+            if [ ${int} -ge 85 ] ; then
+              # if we are here, it means that at least one node has more >= 85% disk usage
+              allNodesBelow85=false
+            fi
+         fi
+       done < <(printf '%s\n' "$nodeDiskUsage")
+
+      if [ "$allNodesBelow85" = true ]; then
+          # this means that ALL the nodes have < 85% disk usage
+          # so we can make all the indices writable again
+          curl -n '\n' -X PUT -H "Content-Type: application/json" http://((elasticsearch_host)):9200/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'
+          echo '{"recovered_from_read_only":true}' >> $LOG_DIR
+      else
+          echo '{"recovered_from_read_only":false}' >> $LOG_DIR
+      fi
+  fi
+done
+
+exit 0

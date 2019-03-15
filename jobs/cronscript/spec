@@ -1,0 +1,10 @@
+---
+name: cronscript
+
+templates: 
+  script: bin/script
+  pre-start: bin/pre-start
+
+packages: []
+
+properties: {}

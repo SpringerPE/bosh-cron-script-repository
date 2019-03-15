@@ -1,0 +1,6 @@
+#!/bin/bash
+set -e
+
+JOB_DIR=/var/vcap/jobs/cenas
+
+cp $JOB_DIR/bin/script /etc/cron.hourly
