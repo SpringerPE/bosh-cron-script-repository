@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+LOG_DIR=/var/vcap/sys/log/cronscript/hello.log
+
+echo "Hello, World!" > $LOG_DIR
+date >> $LOG_DIR
+
+exit 0

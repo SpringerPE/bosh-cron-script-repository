@@ -5,6 +5,7 @@ templates:
   scripts/recover_from_readonly: scripts/recover_from_readonly
   scripts/hello: scripts/hello
   pre-start: bin/pre-start
+  drain: bin/drain
 
 packages: []
 

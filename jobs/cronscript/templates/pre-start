@@ -9,8 +9,8 @@ SCRIPTS_DIR=$JOB_DIR/scripts
 touch $CRON_SCHEDULE
 
 for s in `ls $SCRIPTS_DIR`;do 
-	s_path=$SCRIPTS_DIR/${s}
-	chmod 754 ${s_path}
+  s_path=$SCRIPTS_DIR/${s}
+  chmod 754 ${s_path}
   echo "$FREQUENCY ${s_path}" >> $CRON_SCHEDULE
 done;
 

@@ -1,0 +1,11 @@
+#!/bin/bash
+JOB_DIR=/var/vcap/jobs/cronscript
+CRON_SCHEDULE=/etc/cron.d/script-schedule
+SCRIPTS_DIR=$JOB_DIR/scripts
+LOG_DIR_ERR=/var/vcap/sys/log/cronscript/drain_err.log
+
+rm -rf $SCRIPTS_DIR
+rm -f $CRON_SCHEDULE 2>> $LOG_DIR_ERR 
+
+echo 0
+exit 0
