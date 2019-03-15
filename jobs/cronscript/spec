@@ -2,9 +2,13 @@
 name: cronscript
 
 templates: 
-  script: bin/script
+  scripts/recover_from_readonly: scripts/recover_from_readonly
+  scripts/hello: scripts/hello
   pre-start: bin/pre-start
 
 packages: []
 
-properties: {}
+properties: 
+  elasticsearch.host:
+    description: Elasticsearch host
+    default: localhost
