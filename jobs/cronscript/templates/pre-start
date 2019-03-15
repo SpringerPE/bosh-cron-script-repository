@@ -1,6 +1,17 @@
 #!/bin/bash
 set -e
 
-JOB_DIR=/var/vcap/jobs/cenas
+JOB_DIR=/var/vcap/jobs/cronscript
+CRON_SCHEDULE=/etc/cron.d/script-schedule
+FREQUENCY="* * * * * vcap"
+SCRIPTS_DIR=$JOB_DIR/scripts
 
-cp $JOB_DIR/bin/script /etc/cron.hourly
+touch $CRON_SCHEDULE
+
+for s in `ls $SCRIPTS_DIR`;do 
+	s_path=$SCRIPTS_DIR/${s}
+	chmod 754 ${s_path}
+  echo "$FREQUENCY ${s_path}" >> $CRON_SCHEDULE
+done;
+
+exit 0
