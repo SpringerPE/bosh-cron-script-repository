@@ -3,15 +3,26 @@ set -e
 
 JOB_DIR=/var/vcap/jobs/cronscript
 CRON_SCHEDULE=/etc/cron.d/script-schedule
-FREQUENCY="* * * * * vcap"
+BOSH_USER="vcap"
 SCRIPTS_DIR=$JOB_DIR/scripts
+SCHEDULES_DIR=$JOB_DIR/schedules
 
+# Create the cron schedule file.
+# This file will have the scripts to be executed and its schedules.
 touch $CRON_SCHEDULE
 
+# Iterate through all the scripts in the scripts folder
 for s in `ls $SCRIPTS_DIR`;do 
   s_path=$SCRIPTS_DIR/${s}
+  
+  # Change permissions so that the scripts can be executed
   chmod 754 ${s_path}
-  echo "$FREQUENCY ${s_path}" >> $CRON_SCHEDULE
+
+  # This variable will have the path of the file containg the scron schedule for the given script.
+  schedule_script=$(cat $SCHEDULES_DIR/${s})
+
+  # In here we add the cron schedule, the bosh user and the path of the script to the schedule file.
+  echo "${schedule_script} $BOSH_USER ${s_path}" >> $CRON_SCHEDULE
 done;
 
 exit 0
