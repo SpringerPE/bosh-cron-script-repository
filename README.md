@@ -34,21 +34,31 @@ file with your chron schedule.
 Then you can read that property in the schedule file, like:
 `<%= p("schedules.hello") %>`
 
+## Creating the new bosh release
+
+After adding the scripts and the cron schedules to the release, you will need to create your own version of the release.
+
+For that, all you need to do is:
+
+* execute `bosh create-release --force` from within the release folder in order to create a new version of the release
+* `bosh upload-release` to upload the release into BOSH. This is the step that allows you to use your own release
+  version
+
 # Adding the release into your deployment
 To add the release into your deployment, just create an operation file like
 ```
 - type: replace
   path: /releases/-
   value: 
-    name: bosh-cron-script-repository
-    version: 0+dev.43
-    sha1: 70b3831+
+    name: cron-script-repository
+    version: YOUR CUSTOM VERSION
+    sha1: YOUR CUSTOM SHA1
 
 - type: replace
   path: /instance_groups/name=kibana?/jobs/-
   value: 
     name: cronscript
-    release: bosh-cron-script-repository
+    release: cron-script-repository
     properties:
       schedules:
         hello: '11 * * * *'
