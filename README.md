@@ -26,7 +26,7 @@ Then the release will copy the scripts into `$JOB_DIR/scripts` and make them exe
 
 ## Scheduling the cron jobs
 To add cron entry with your script, you will need to create a file under `jobs/cronscript/templates/schedules` with 
-* the same name * as your script. This file can only contain 1 line, which will be the cron schedule that you want for
+*the same name* as your script. This file can only contain 1 line, which will be the cron schedule that you want for
   that cron job.
 
 If you want to make that configurable (which will probably will be a good idea), you need to add an entry to the spec
