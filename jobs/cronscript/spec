@@ -3,7 +3,9 @@ name: cronscript
 
 templates: 
   scripts/recover_from_readonly: scripts/recover_from_readonly
+  schedules/recover_from_readonly: schedules/recover_from_readonly
   scripts/hello: scripts/hello
+  schedules/hello: schedules/hello
   pre-start: bin/pre-start
   drain: bin/drain
 
@@ -13,3 +15,11 @@ properties:
   elasticsearch.host:
     description: Elasticsearch host
     default: localhost
+  schedules.hello:
+    description: The cron schedule that you want to define for the `hello` script. Defaults to hourly at minute 0.
+    example: "* * * * *"
+    default: "0 * * * *" 
+  schedules.recover_from_readonly:
+    description: The cron schedule that you want to define for the `recover_from_readonly` script. Defaults to hourly at minute 0.
+    example: "* * * * *"
+    default: "0 * * * *" 
